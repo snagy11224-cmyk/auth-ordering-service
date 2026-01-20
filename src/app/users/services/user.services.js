@@ -1,4 +1,4 @@
-const { UserAlreadyExistsError } = require("../errors");
+const { UserAlreadyExistsError, InvalidCredentialsError , UserNotFoundError, NoTokenProvidedError} = require("../errors");
 const userRepo=require("../repositories/user.repository");
 const {hashPassword,comparePassword}=require("../utils/hash");
 const {createAccessToken,createRefreshToken,verifyRefreshToken,verifyAccessToken}=require("../utils/jwt");
@@ -18,12 +18,12 @@ exports.registerUser=async(email,password)=>{
 exports.loginUser = async (email, password) => {
   const user = userRepo.findEmail(email);
   if (!user) {
-    throw new Error("Invalid credentials");
+    throw InvalidCredentialsError;
   }
 
   const isCorrect = await comparePassword(password, user.password);
   if (!isCorrect) {
-    throw new Error("Invalid credentials");
+    throw InvalidCredentialsError;
   }
 
   return {
@@ -36,7 +36,7 @@ exports.loginUser = async (email, password) => {
 exports.getProfile = async (decodedUser) => {
   const user = userRepo.findEmail(decodedUser.email);
   if (!user) {
-    throw new Error("User not found");
+    throw UserNotFoundError;
   }
   return user;
 };
@@ -44,14 +44,14 @@ exports.getProfile = async (decodedUser) => {
 //refresh token
 exports.refreshToken = async (token) => {
   if (!token) {
-    throw new Error("No token provided");
+    throw NoTokenProvidedError;
   }
   
   const decoded = verifyRefreshToken(token);
 
   const user = userRepo.findEmail(decoded.email);
   if (!user) {
-    throw new Error("User not found");
+    throw UserNotFoundError;
   }
 
   return createAccessToken(user);

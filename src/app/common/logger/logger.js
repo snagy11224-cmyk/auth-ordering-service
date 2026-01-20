@@ -13,7 +13,7 @@ class Logger {
     const logObject = {
       level: level,
       message: message,
-      timestamp: Date.now(),
+      timestamp: new Date().toISOString(),
       ...metadata,
     };
     //this could call external logging services like datadog,loggly,papertrail
