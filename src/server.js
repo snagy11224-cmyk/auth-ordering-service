@@ -1,10 +1,12 @@
 const express = require("express"); 
 const userRouter = require("./app/users/routes");
 const ErrorHandler = require("./app/common/error/errorHandler"); 
+const correlationId = require("./app/common/correlation/correlationId");
 const app= express();
 app.use(express.json()); 
 const port = 4000; 
 
+app.use(correlationId)
 
 app.use('/users', userRouter);
 app.use(ErrorHandler);

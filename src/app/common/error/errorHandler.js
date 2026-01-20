@@ -1,3 +1,4 @@
+const correlationId = require("../correlation/correlationId");
 const logger = require("../logger/logger");
 
 module.exports = (err, req, res, next) => {
@@ -8,6 +9,7 @@ module.exports = (err, req, res, next) => {
     statusCode: err.statusCode,
     operational: operational,
     body: req.body,
+    correlationId: req.correlationId
   });
 
   if (operational) {

@@ -1,4 +1,4 @@
-const { UserAlreadyExistsError, InvalidCredentialsError , UserNotFoundError, NoTokenProvidedError} = require("../errors");
+const { UserAlreadyExistsError , UserNotFoundError, NoTokenProvidedError} = require("../errors");
 const userRepo=require("../repositories/user.repository");
 const {hashPassword,comparePassword}=require("../utils/hash");
 const {createAccessToken,createRefreshToken,verifyRefreshToken,verifyAccessToken}=require("../utils/jwt");
@@ -18,12 +18,12 @@ exports.registerUser=async(email,password)=>{
 exports.loginUser = async (email, password) => {
   const user = userRepo.findEmail(email);
   if (!user) {
-    throw InvalidCredentialsError;
+    throw UserNotFoundError;
   }
 
   const isCorrect = await comparePassword(password, user.password);
   if (!isCorrect) {
-    throw InvalidCredentialsError;
+    throw UserNotFoundError;
   }
 
   return {
