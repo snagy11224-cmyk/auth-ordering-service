@@ -1,3 +1,4 @@
+const { UserAlreadyExistsError } = require("../errors");
 const userRepo=require("../repositories/user.repository");
 const {hashPassword,comparePassword}=require("../utils/hash");
 const {createAccessToken,createRefreshToken,verifyRefreshToken,verifyAccessToken}=require("../utils/jwt");
@@ -6,7 +7,7 @@ const {createAccessToken,createRefreshToken,verifyRefreshToken,verifyAccessToken
 exports.registerUser=async(email,password)=>{
     const exists=userRepo.findEmail(email);
     if(exists){
-        throw new Error("User already exists");
+        throw UserAlreadyExistsError;
     }
 
     const hashedPassword=await hashPassword(password);
