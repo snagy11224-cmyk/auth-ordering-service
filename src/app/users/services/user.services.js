@@ -21,13 +21,13 @@ logger.info("Register user request received", {
   email,
 });
 
-const exists = userRepo.findEmail(email);
+const exists = await userRepo.findEmail(email);
   if (exists) {
     logger.warn("User already exists", { email, correlationId });
     throw UserAlreadyExistsError;
   }
   const hashedPassword = await hashPassword(password);
-  const user = userRepo.create(email, hashedPassword);
+  const user = await userRepo.create(email, hashedPassword);
   logger.info("User registered successfully", {
     userId: user.id,
     correlationId,
@@ -38,7 +38,7 @@ const exists = userRepo.findEmail(email);
 
 //login user
 exports.loginUser = async (email, password) => {
-  const user = userRepo.findEmail(email);
+  const user =await userRepo.findEmail(email);
   if (!user) {
     throw UserNotFoundError;
   }
@@ -56,7 +56,7 @@ exports.loginUser = async (email, password) => {
 
 //get my profile
 exports.getProfile = async (decodedUser) => {
-  const user = userRepo.findEmail(decodedUser.email);
+  const user = await userRepo.findEmail(decodedUser.email);
   if (!user) {
     throw UserNotFoundError;
   }
@@ -71,7 +71,7 @@ exports.refreshToken = async (token) => {
 
   const decoded = verifyRefreshToken(token);
 
-  const user = userRepo.findEmail(decoded.email);
+  const user = await userRepo.findEmail(decoded.email);
   if (!user) {
     throw UserNotFoundError;
   }
