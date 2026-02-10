@@ -16,6 +16,12 @@ datasource db {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //write DB model/tables here and prisma will migrate it to postgress
 
+enum OrderStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+}
+
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
@@ -23,11 +29,36 @@ model User {
   orders   Order[]
 }
 
+model Product {
+  id    Int    @id @default(autoincrement())
+  name  String
+  price Float
+  stock Int
+
+  items OrderItem[]
+}
+
 model Order {
-  id        String   @id @default(uuid())
+  id        String      @id @default(uuid())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
   total     Float
-  status    String
-  createdAt DateTime @default(now())
+  status    OrderStatus @default(PENDING)
+  details   Json
+  createdAt DateTime    @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        Int    @id @default(autoincrement())
+  orderId   String
+  productId Int
+  price     Float
+  quantity  Int
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
 }
