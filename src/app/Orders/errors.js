@@ -7,7 +7,7 @@ const OrderNotFoundError = new AppError("Order not found", 404);
 const OrderCannotBeCancelledError = new AppError("Order cannot be cancelled",400);
 const UnauthorizedOrderAccessError = new AppError("Unauthorized access to order",403);
 const EmptyOrderItemsError = new AppError("Order must contain items", 400);
-
+const UserNotFoundError = new AppError("User not found", 404);
 module.exports = {
   ProductNotFoundError,
   ProductOutOfStockError,

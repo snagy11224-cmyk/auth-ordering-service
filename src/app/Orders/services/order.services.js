@@ -2,12 +2,15 @@ const prisma = require('../../common/DB/prisma');
 const {
   ProductNotFoundError,
   ProductOutOfStockError,
-  InvalidProductDataError,
+  UserNotFoundError,
   OrderNotFoundError,
   OrderCannotBeCancelledError,
   UnauthorizedOrderAccessError,
   EmptyOrderItemsError,
 } = require('../errors');
+
+//import ensureUserExists from user service to check if user exists before creating order
+const { ensureUserExistsById } = require('../../users/services/user.services'); 
 
 class OrderService {
   constructor({
@@ -24,8 +27,13 @@ class OrderService {
 
  ////////////////////////////////////////
  //create order - checks stock, creates order + items, updates stock
-  async createOrder({ userId, items, details }) {
-    await this.userService.ensureUserExists(userId);
+  async createOrder({ email, items, details }) {
+  const user = await this.userService.findByEmail(email);
+  if (!user) {
+  throw UserNotFoundError;
+}
+const userId = user.id;
+
     if (!items || items.length === 0) {
         throw EmptyOrderItemsError;
     }
@@ -100,13 +108,20 @@ class OrderService {
 
   //////////////////////////////////////////
   // get orders for a user
-  async getOrdersByUser(userId) {
+  async getOrdersByUser(email) {
+    const user = await this.userService.findByEmail(email);
+    const userId = user.id;
+
+
     return this.orderRepo.findByUserId(userId);
   }
 
 //////////////////////////////////////////
 // get order details - includes items and product details
-  async getOrderDetails({ orderId, userId }) {
+  async getOrderDetails({ orderId, email }) {
+    const user = await this.userService.findByEmail(email);
+    const userId = user.id;
+
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: {
@@ -129,7 +144,9 @@ class OrderService {
 
 /////////////////////////////////////////
 // cancel order - only if pending, restores stock
-  async cancelOrder({ orderId, userId }) {
+  async cancelOrder({ orderId, email }) {
+  const user = await this.userService.findByEmail(email);
+  const userId = user.id;
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true },

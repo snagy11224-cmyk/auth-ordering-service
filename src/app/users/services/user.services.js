@@ -78,3 +78,22 @@ exports.refreshToken = async (token) => {
 
   return createAccessToken(user);
 };
+
+exports.ensureUserExistsById = async (userId) => {
+  const user = await userRepo.findById(userId);
+  if (!user) {
+    throw UserNotFoundError;
+  }
+  return user;
+};
+
+
+exports.findByEmail = async (email) => {
+  const user = await userRepo.findEmail(email);
+
+  if (!user) {
+    throw UserNotFoundError;
+  }
+
+  return user;
+};

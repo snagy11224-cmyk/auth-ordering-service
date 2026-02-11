@@ -1,9 +1,8 @@
-//import services
-const orderService = require("../../Orders/services/order.services");
+//const orderService = require("../../Orders/services/order.services");
 
 exports.createOrder = (orderService) => async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const email = req.user.email;
     const { items, details } = req.body;
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -13,7 +12,7 @@ exports.createOrder = (orderService) => async (req, res, next) => {
     }
 
     const order = await orderService.createOrder({
-      userId,
+      email,
       items,
       details,
     });
@@ -30,10 +29,11 @@ exports.createOrder = (orderService) => async (req, res, next) => {
 
 exports.cancelOrder = (orderService) => async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    //const userId = req.user.id;
+    const email = req.user.email;
     const { orderId } = req.params;
 
-    await orderService.cancelOrder({ orderId, userId });
+    await orderService.cancelOrder({ orderId, email });
 
     res.status(200).json({
       success: true,
@@ -48,11 +48,11 @@ exports.cancelOrder = (orderService) => async (req, res, next) => {
 exports.getOrderDetails = (orderService) => async (req, res, next) => {
   try {
     const { orderId } = req.params;
-    const userId = req.user.id;
+    const email = req.user.email;
 
     const order = await orderService.getOrderDetails({
       orderId,
-      userId,
+      email,
     });
 
     res.status(200).json({
@@ -67,9 +67,9 @@ exports.getOrderDetails = (orderService) => async (req, res, next) => {
 
 exports.getMyOrders = (orderService) => async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const email = req.user.email;
 
-    const orders = await orderService.getOrdersByUser(userId);
+    const orders = await orderService.getOrdersByUser(email);
 
     res.status(200).json({
       success: true,
