@@ -19,6 +19,11 @@ const ErrorHandler = require("./app/common/error/errorHandler");
 const correlationId = require("./app/common/correlation/correlationId");
 const requestTimeMiddleware = require("./app/common/logger/requestTimeHelper");
 
+const productRoutes = require('./app/Orders/product.routes');
+const productController = require('./app/Orders/controllers/product.controller');
+const ProductService = require('./app/Orders/services/product.services');
+
+
 const app= express();
 app.use(express.json()); 
 const port = 4000; 
@@ -42,9 +47,15 @@ const orderControllerInstance = {
   getMyOrders: orderController.getMyOrders(orderService),
 };
 
+const productService = new ProductService({ productRepo });
+const productControllerInstance = {
+  createProduct: productController.createProduct(productService),
+};
+
 console.log('authMiddleware:', typeof authMiddleware);
 console.log('orderRoutes:', typeof orderRoutes);
 app.use('/orders', authMiddleware, orderRoutes(orderControllerInstance));
+app.use('/products',authMiddleware,productRoutes(productControllerInstance));
 
 app.use(ErrorHandler);
 

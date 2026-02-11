@@ -3,10 +3,10 @@ const jwt = require("jsonwebtoken");
 const ACCESS_SECRET = process.env.ACCESS_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 exports.createAccessToken = (user) => {
-  return jwt.sign({ email: user.email }, ACCESS_SECRET, { expiresIn: "15m" });
+  return jwt.sign({ email: user.email, role: user.role }, ACCESS_SECRET, { expiresIn: "15m" });
 };
 exports.createRefreshToken = (user) => {
-  return jwt.sign({ email: user.email }, REFRESH_SECRET, { expiresIn: "7d" });
+  return jwt.sign({ email: user.email,role: user.role }, REFRESH_SECRET, { expiresIn: "7d" });
 };
 
 exports.verifyRefreshToken = (token) => {
