@@ -23,10 +23,3 @@ Node.js e-commerce backend using Express.js, Prisma ORM, and PostgreSQL, featuri
 - JWT
 - Git & GitHub
 
-## Project Structure
-
-```txt
-src/
-prisma/
-package.json
-prisma.config.ts
